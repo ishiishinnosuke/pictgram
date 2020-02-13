@@ -1,7 +1,12 @@
 class TopicsController < ApplicationController
   def index
-    @topics = Topic.all
+    @topics = Topic.all.includes(:favorite_users)
   end  
+
+  def show
+    @topic = Topic.find_by(id: topic_params[:id])
+    @favorites_count = Favorites.where(topic_id: @topic.id).count
+  end
 
   def new
     @topic = Topic.new
@@ -17,7 +22,7 @@ class TopicsController < ApplicationController
       render :new
     end
   end
-
+  
   private
   def topic_params
     params.require(:topic).permit(:image, :description)
